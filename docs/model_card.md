@@ -1,39 +1,100 @@
-# MODEL CARD : HR Turnover Prediction
+# Model Card — HR Turnover Prediction
 
-## 1. Objectif du modèle
-• **Cas d’usage visé :** Prédiction du risque de départ (turnover) des employés pour aider les RH à cibler les actions de rétention.
-• **Entrées :** Données tabulaires (âge, salaire, satisfaction, engagement, absences, département, performance, etc.).
-• **Sorties :** Probabilité de départ (score de 0 à 1) et classification binaire (0 = Actif, 1 = Terminé).
+## Model Details
 
-## 2. Données d’entraînement
-• **Dataset(s) utilisés :** [Human Resources Data Set (Kaggle)](https://www.kaggle.com/datasets/rhuebner/human-resources-data-set) par Dr. Rich Huebner.
-• **Taille / diversité :**
-  - **Nombre total d’échantillons :** ~312 employés.
-  - **Répartition des classes :** Déséquilibrée (majorité d'employés actifs, minorité de départs). Équilibrée informatiquement lors de l'entraînement.
-  - **Diversité :** Multiples départements, âges et données démographiques. Les variables sensibles (Genre, RaceDesc) ont été conservées pour vérifier l'équité du modèle.
-• **Limites connues :** Dataset généré de manière synthétique (visée éducative). Biais géographique (grosse majorité d'employés dans le Massachusetts) et sectoriel (forte représentation du département Production). Petit volume de données empêchant la généralisation à grande échelle.
+| Field | Value |
+|-------|-------|
+| **Task** | Binary Classification — Predict Employee Turnover |
+| **Models Compared** | Logistic Regression, Decision Tree, Random Forest, XGBoost |
+| **Selected Model** | Best frugal choice (highest F1/complexity ratio) |
+| **Framework** | scikit-learn 1.5.1, XGBoost 2.0.3 |
+| **Training Data** | 80% split (~250 employees) |
+| **Test Data** | 20% split (~62 employees) |
+| **Carbon Tracking** | CodeCarbon 2.4.1 |
 
-## 3. Performances
-• **Métriques utilisées :** F1-Score (métrique principale face au déséquilibre), Accuracy, Precision, Recall, AUC-ROC.
-• **Résultats :** Les résultats globaux démontrent que l'approche *Frugal AI* fonctionne : des modèles très simples (comme la Régression Logistique ou l'Arbre de Décision) atteignent des métriques de performance comparables aux modèles complexes lourds mis en compétition paramétrique (Random Forest / XGBoost).
+## Intended Use
 
-## 4. Limites
-• **Risques d’erreur connus :** En raison du faible jeu de données, les faux positifs (employé signalé à risque alors qu'il va rester) et faux négatifs sont possibles.
-• **Situations non couvertes :** Le modèle prend une "photo" à l'instant T et manque d'analyse longitudinale fine (évolution dans le temps). Il ignore le contexte macroéconomique (crise, inflation, etc.).
-• **Risques de biais :** Si le jeu de données originel favorise les promotions de certains genres ou origines, le modèle pourrait en hériter silencieusement. L'analyse de l'importance des variables (SHAP) permet de le surveiller.
+### Primary Use
+- HR analytics tool to **identify employees at risk of leaving**
+- Support tool for HR managers in **talent retention strategies**
+- Educational demonstration of **Frugal AI** and **Explainable AI**
 
-## 5. Risques & mitigation
-• **Risques de mauvaise utilisation :** Utiliser ces prédictions pour automatiser des licenciements ou discriminer préventivement à l'embauche (système punitif au lieu d'être un système de rétention bienveillant). Penser que corrélation (montrée par SHAP) vaut causalité directe.
-• **Contrôles mis en place :**
-  - **Explicabilité totale :** Chaque prédiction est passée dans SHAP et LIME pour justifier "pourquoi" l'alerte est levée.
-  - **Vie privée (RGPD) :** Application stricte du hachage pseudo-anonyme (SHA-256) pour les noms, et conversion des dates de naissance en âge simple.
-  - **Avertissements transverses :** Insistance sur le fait que l'IA ne fournit qu'une *aide à la décision* et ne remplace pas le jugement humain RH.
+### Users
+- HR Directors and People Analytics Teams
+- Decision support (advisory) — **NOT automated decision-making**
 
-## 6. Énergie et frugalité
-• **Poids du modèle :** Moins de 1 Mo.
-• **Temps d’inférence :** Immédiat (< 0.1s) sur un CPU standard.
-• **Énergie estimée (CodeCarbon) :** L'approche privilégie un modèle classique et sélectionné pour son ratio F1/Complexité. Le suivi par `CodeCarbon` intégré indique une émission en fraction absolue de gramme de CO₂ par entraînement.
+### Out of Scope
+- ❌ Automated hiring/firing decisions
+- ❌ Individual employee surveillance
+- ❌ Performance-based penalties
+- ❌ Use without human oversight
 
-## 7. Cyber
-• **Sécurisation des entrées :** Pas de prompts en texte libre, minimisant les prompt injections. Les features passent par un scaler standardisé.
-• **Secrets protégés :** Entièrement open-source, fonctionne 100% en local et "offline". La solution est dépourvue d'API keys exposées ou de base de données persistante non sécurisée.
+## Training Data
+
+- **Source:** Kaggle HR Dataset (synthetic, educational)
+- **Size:** ~312 employees
+- **Features:** 13 selected features + department dummies
+- **Target:** `Termd` (0 = Active, 1 = Terminated)
+- **Class Balance:** Imbalanced (more active than terminated)
+- **Handling:** Class weighting (balanced) in model training
+
+## Performance Metrics
+
+| Metric | Description |
+|--------|-------------|
+| **Accuracy** | Overall correct predictions |
+| **F1 Score** | Harmonic mean of precision/recall (primary metric) |
+| **Precision** | Of predicted terminations, how many actually left |
+| **Recall** | Of actual terminations, how many were caught |
+| **AUC-ROC** | Area under ROC curve — discrimination ability |
+| **CV F1** | 5-fold cross-validated F1 score |
+
+*(See Frugal AI tab in demo for exact values)*
+
+## Frugal AI Considerations
+
+1. **Model Selection:** Deliberate comparison from simplest to most complex
+2. **Resource Tracking:** CO₂ emissions measured with CodeCarbon
+3. **Key Insight:** Simple models achieve comparable performance
+4. **No GPU Required:** Entire pipeline runs on CPU
+5. **Small Dataset:** No need for distributed computing or big data tools
+
+## Explainability
+
+| Method | Scope | Purpose |
+|--------|-------|---------|
+| SHAP | Global | Overall feature importance ranking |
+| SHAP | Local | Individual prediction explanations |
+| LIME | Local | Alternative local interpretability |
+| Text | Local | Human-readable explanations for HR |
+
+## Limitations
+
+- **Data Size:** Only ~312 employees — limited statistical power
+- **Synthetic Data:** May not reflect real-world patterns
+- **Temporal:** Snapshot in time, not longitudinal
+- **Features:** Limited feature set — real HR data would have more signals
+- **Bias Risk:** Historical data patterns may encode past biases
+
+## Ethical Considerations
+
+### Fairness
+- Sensitive attributes (gender, race) are present in training data
+- Model should be **regularly audited** for disparate impact
+- Feature importance ≠ causal relationship (correlation ≠ causation)
+
+### Privacy (GDPR)
+- All personal identifiers anonymized (SHA-256 hashing)
+- DOB → Age conversion (no exact dates)
+- Names, zip codes, employee IDs removed
+
+### Transparency
+- Every prediction can be explained with SHAP/LIME
+- Model card and data card provided
+- Open-source tools used
+
+### Recommendations
+- ⚠️ Always pair AI predictions with human judgment
+- ⚠️ Regularly retrain and audit the model
+- ⚠️ Do NOT use for automated employment decisions
+- ✅ Use as a decision-support tool for proactive HR strategies
