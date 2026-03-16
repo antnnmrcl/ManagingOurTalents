@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# CodeCarbon
+emissions.csv
+
+# Models (can be regenerated)
+models/*.pkl
+
+# Results (can be regenerated)
+results/plots/*.png
+results/plots/*.html
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Gemini
+.gemini/

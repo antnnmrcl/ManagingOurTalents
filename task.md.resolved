@@ -1,0 +1,42 @@
+# Hackathon: Trusted AI x HR (Frugal AI + Explainable AI)
+
+## Project Setup
+- [/] Explore dataset and understand structure
+- [ ] Create project directory structure (GitHub-ready)
+- [ ] Create README with objectives, scope, persona, instructions
+
+## Data Processing & Anonymization
+- [ ] Load and explore the HR dataset
+- [ ] Anonymize sensitive data (GDPR compliance - names, emails)
+- [ ] Create Data Card documenting data processing
+
+## Model Development (Frugal AI focus)
+- [ ] Build turnover prediction model (simple vs complex comparison)
+- [ ] Compare model complexity vs performance (Frugal AI)
+- [ ] Track carbon emissions with CodeCarbon
+- [ ] Select the most frugal effective model
+
+## Explainability (XAI focus)
+- [ ] Apply SHAP for global/local explanations
+- [ ] Apply LIME for individual predictions
+- [ ] Create visualizations for HR stakeholders
+- [ ] Document model transparency
+
+## NLP / Text Analysis
+- [ ] Generate simulated employee feedback data
+- [ ] Sentiment analysis on feedback
+- [ ] Theme extraction from text data
+
+## Interactive Demo
+- [ ] Build Streamlit/Gradio dashboard
+- [ ] Individual employee risk prediction with explanations
+- [ ] Feature importance visualizations
+- [ ] Frugal AI comparison metrics display
+
+## Documentation & Deliverables
+- [ ] Model Card
+- [ ] Data Card
+- [ ] Architecture diagram
+- [ ] Technical documentation
+- [ ] Executive summary
+- [ ] Presentation slides (outline)
