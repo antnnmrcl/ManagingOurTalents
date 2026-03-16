@@ -1,100 +1,39 @@
-# Model Card — HR Turnover Prediction
+# MODEL CARD : HR Turnover Prediction
 
-## Model Details
+## 1. Model Objective
+• **Target Use Case:** Predicting employee turnover risk to help HR target retention actions.
+• **Inputs:** Tabular data (age, salary, satisfaction, engagement, absences, department, performance, etc.).
+• **Outputs:** Probability of departure (score from 0 to 1) and binary classification (0 = Active, 1 = Terminated).
 
-| Field | Value |
-|-------|-------|
-| **Task** | Binary Classification — Predict Employee Turnover |
-| **Models Compared** | Logistic Regression, Decision Tree, Random Forest, XGBoost |
-| **Selected Model** | Best frugal choice (highest F1/complexity ratio) |
-| **Framework** | scikit-learn 1.5.1, XGBoost 2.0.3 |
-| **Training Data** | 80% split (~250 employees) |
-| **Test Data** | 20% split (~62 employees) |
-| **Carbon Tracking** | CodeCarbon 2.4.1 |
+## 2. Training Data
+• **Dataset(s) used:** [Human Resources Data Set (Kaggle)](https://www.kaggle.com/datasets/rhuebner/human-resources-data-set) by Dr. Rich Huebner.
+• **Size / diversity:**
+  - **Total number of samples:** ~312 employees.
+  - **Class distribution:** Imbalanced (majority active employees, minority departures). Balanced computationally during training.
+  - **Diversity:** Multiple departments, ages, and demographics. Sensitive variables (Gender, RaceDesc) were kept to verify model fairness.
+• **Known limitations:** Synthetically generated dataset (educational purposes). Geographic bias (large majority in Massachusetts) and sector bias (high representation of Production department). Small data volume preventing large-scale generalization.
 
-## Intended Use
+## 3. Performance
+• **Metrics used:** F1-Score (primary metric for imbalance), Accuracy, Precision, Recall, AUC-ROC.
+• **Results:** Global results demonstrate that the *Frugal AI* approach works: very simple models (like Logistic Regression or Decision Tree) achieve performance metrics comparable to heavy complex models placed in parametric competition (Random Forest / XGBoost).
 
-### Primary Use
-- HR analytics tool to **identify employees at risk of leaving**
-- Support tool for HR managers in **talent retention strategies**
-- Educational demonstration of **Frugal AI** and **Explainable AI**
+## 4. Limitations
+• **Known error risks:** Due to the small dataset, false positives (employee flagged at risk when they will stay) and false negatives are possible.
+• **Uncovered situations:** The model takes a "snapshot" at a given time and lacks fine longitudinal analysis (evolution over time). It ignores the macroeconomic context (crisis, inflation, etc.).
+• **Bias risks:** If the original dataset favored promotions for certain genders or origins, the model could silently inherit it. Feature importance analysis (SHAP) is used to monitor this.
 
-### Users
-- HR Directors and People Analytics Teams
-- Decision support (advisory) — **NOT automated decision-making**
+## 5. Risks & Mitigation
+• **Misuse risks:** Using these predictions to automate layoffs or preemptively discriminate in hiring (punitive system instead of a benevolent retention system). Assuming correlation (shown by SHAP) equals direct causality.
+• **Implemented controls:**
+  - **Total explainability:** Each prediction is passed through SHAP and LIME to justify "why" the alert is raised.
+  - **Privacy (GDPR):** Strict application of pseudo-anonymous hashing (SHA-256) for names, and conversion of birth dates to simple age.
+  - **Transverse warnings:** Emphasis on the fact that AI only provides *decision support* and does not replace human HR judgment.
 
-### Out of Scope
-- ❌ Automated hiring/firing decisions
-- ❌ Individual employee surveillance
-- ❌ Performance-based penalties
-- ❌ Use without human oversight
+## 6. Energy and Frugality
+• **Model weight:** Less than 1 MB.
+• **Inference time:** Immediate (< 0.1s) on a standard CPU.
+• **Estimated energy (CodeCarbon):** The approach favors a classic model selected for its F1/Complexity ratio. Tracking by integrated `CodeCarbon` indicates emissions in an absolute fraction of a gram of CO₂ per training.
 
-## Training Data
-
-- **Source:** Kaggle HR Dataset (synthetic, educational)
-- **Size:** ~312 employees
-- **Features:** 13 selected features + department dummies
-- **Target:** `Termd` (0 = Active, 1 = Terminated)
-- **Class Balance:** Imbalanced (more active than terminated)
-- **Handling:** Class weighting (balanced) in model training
-
-## Performance Metrics
-
-| Metric | Description |
-|--------|-------------|
-| **Accuracy** | Overall correct predictions |
-| **F1 Score** | Harmonic mean of precision/recall (primary metric) |
-| **Precision** | Of predicted terminations, how many actually left |
-| **Recall** | Of actual terminations, how many were caught |
-| **AUC-ROC** | Area under ROC curve — discrimination ability |
-| **CV F1** | 5-fold cross-validated F1 score |
-
-*(See Frugal AI tab in demo for exact values)*
-
-## Frugal AI Considerations
-
-1. **Model Selection:** Deliberate comparison from simplest to most complex
-2. **Resource Tracking:** CO₂ emissions measured with CodeCarbon
-3. **Key Insight:** Simple models achieve comparable performance
-4. **No GPU Required:** Entire pipeline runs on CPU
-5. **Small Dataset:** No need for distributed computing or big data tools
-
-## Explainability
-
-| Method | Scope | Purpose |
-|--------|-------|---------|
-| SHAP | Global | Overall feature importance ranking |
-| SHAP | Local | Individual prediction explanations |
-| LIME | Local | Alternative local interpretability |
-| Text | Local | Human-readable explanations for HR |
-
-## Limitations
-
-- **Data Size:** Only ~312 employees — limited statistical power
-- **Synthetic Data:** May not reflect real-world patterns
-- **Temporal:** Snapshot in time, not longitudinal
-- **Features:** Limited feature set — real HR data would have more signals
-- **Bias Risk:** Historical data patterns may encode past biases
-
-## Ethical Considerations
-
-### Fairness
-- Sensitive attributes (gender, race) are present in training data
-- Model should be **regularly audited** for disparate impact
-- Feature importance ≠ causal relationship (correlation ≠ causation)
-
-### Privacy (GDPR)
-- All personal identifiers anonymized (SHA-256 hashing)
-- DOB → Age conversion (no exact dates)
-- Names, zip codes, employee IDs removed
-
-### Transparency
-- Every prediction can be explained with SHAP/LIME
-- Model card and data card provided
-- Open-source tools used
-
-### Recommendations
-- ⚠️ Always pair AI predictions with human judgment
-- ⚠️ Regularly retrain and audit the model
-- ⚠️ Do NOT use for automated employment decisions
-- ✅ Use as a decision-support tool for proactive HR strategies
+## 7. Cyber
+• **Input security:** No free-text prompts, minimizing prompt injections. Features pass through a standardized scaler.
+• **Protected secrets:** Fully open-source, runs 100% locally and "offline". The solution is devoid of exposed API keys or unsecured persistent databases.
