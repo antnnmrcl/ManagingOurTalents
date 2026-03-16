@@ -233,6 +233,42 @@ def main():
                 fig.update_layout(height=400, xaxis_title="Performance Score", yaxis_title="Count")
                 st.plotly_chart(fig, use_container_width=True)
 
+        st.markdown("---")
+        st.subheader("⚠️ Top Active Employees at Risk of Leaving")
+        
+        # Get active employees
+        active_mask = (y == 0)
+        
+        if active_mask.sum() > 0 and hasattr(best_model, "predict_proba"):
+            X_active = X[active_mask].copy()
+            df_active = df[active_mask].copy()
+            
+            # Predict probabilities
+            X_active_scaled = scaler.transform(X_active.values)
+            probs = best_model.predict_proba(X_active_scaled)
+            
+            # Extract probability for class 1 (Terminated)
+            if probs.ndim > 1 and probs.shape[1] > 1:
+                risk_scores = probs[:, 1]
+            else:
+                risk_scores = probs[:, 0]
+                
+            df_active["Flight Risk Score"] = risk_scores
+            
+            # Sort by risk score
+            top_risk = df_active.sort_values(by="Flight Risk Score", ascending=False).head(10)
+            
+            # Select columns to display
+            display_cols = ["EmployeeID_Anon", "Department", "Position", "Salary", "Flight Risk Score"]
+            display_cols = [c for c in display_cols if c in top_risk.columns]
+            
+            # Format dataframe
+            display_df = top_risk[display_cols].copy()
+            display_df["Flight Risk Score"] = display_df["Flight Risk Score"].apply(lambda x: f"{x:.1%}")
+            
+            st.dataframe(display_df, use_container_width=True, hide_index=True)
+            st.caption("Risk scores reflect the model's estimated probability of the employee leaving based on historical patterns.")
+
     # ============================================================
     # TAB 2: PREDICT & EXPLAIN
     # ============================================================
@@ -318,10 +354,28 @@ def main():
                         if isinstance(ev, (list, np.ndarray)):
                             ev = ev[1] if len(ev) > 1 else ev[0]
 
+                    # Extract single dimension for positive class
+                    val = np.array(sv[0])
+                    if len(val.shape) > 1:
+                        # Take the positive class [:, 1] if available, otherwise 0
+                        val = val[:, 1] if val.shape[1] > 1 else val[:, 0]
+                    # Ensure val is strictly 1D
+                    val = val.flatten()
+
+                    try:
+                        # ev could be a list, array, or float
+                        if isinstance(ev, (list, np.ndarray)):
+                            ev_val = float(ev[1] if len(ev) > 1 else ev[0])
+                        else:
+                            ev_val = float(ev)
+                    except:
+                        # Fallback if any unexpected shape
+                        ev_val = float(np.mean(ev))
+
                     # Waterfall plot
                     explanation = shap.Explanation(
-                        values=sv[0],
-                        base_values=ev,
+                        values=val,
+                        base_values=ev_val,
                         data=input_scaled[0],
                         feature_names=feature_names
                     )
@@ -333,7 +387,7 @@ def main():
                     plt.close()
 
                     # Text explanation
-                    text = generate_explanation_text(sv, feature_names, input_scaled, idx=0)
+                    text = generate_explanation_text([val], feature_names, input_scaled, idx=0)
                     st.markdown("### 💡 Human-Readable Explanation")
                     st.code(text)
 
