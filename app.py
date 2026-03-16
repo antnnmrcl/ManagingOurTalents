@@ -318,10 +318,28 @@ def main():
                         if isinstance(ev, (list, np.ndarray)):
                             ev = ev[1] if len(ev) > 1 else ev[0]
 
+                    # Extract single dimension for positive class
+                    val = np.array(sv[0])
+                    if len(val.shape) > 1:
+                        # Take the positive class [:, 1] if available, otherwise 0
+                        val = val[:, 1] if val.shape[1] > 1 else val[:, 0]
+                    # Ensure val is strictly 1D
+                    val = val.flatten()
+
+                    try:
+                        # ev could be a list, array, or float
+                        if isinstance(ev, (list, np.ndarray)):
+                            ev_val = float(ev[1] if len(ev) > 1 else ev[0])
+                        else:
+                            ev_val = float(ev)
+                    except:
+                        # Fallback if any unexpected shape
+                        ev_val = float(np.mean(ev))
+
                     # Waterfall plot
                     explanation = shap.Explanation(
-                        values=sv[0],
-                        base_values=ev,
+                        values=val,
+                        base_values=ev_val,
                         data=input_scaled[0],
                         feature_names=feature_names
                     )
@@ -333,7 +351,7 @@ def main():
                     plt.close()
 
                     # Text explanation
-                    text = generate_explanation_text(sv, feature_names, input_scaled, idx=0)
+                    text = generate_explanation_text([val], feature_names, input_scaled, idx=0)
                     st.markdown("### 💡 Human-Readable Explanation")
                     st.code(text)
 
@@ -562,36 +580,45 @@ def main():
 
         with about_tab1:
             st.markdown("""
-            ## Model Card — HR Turnover Prediction
+            ## MODEL CARD : HR Turnover Prediction
 
-            ### Model Details
-            - **Task:** Binary classification — predict employee turnover (Termd: 0/1)
-            - **Architecture:** Multiple models compared (Logistic Regression, Decision Tree, Random Forest, XGBoost)
-            - **Selected Model:** Best frugal choice based on F1/complexity ratio
-            - **Framework:** scikit-learn, XGBoost
+            ### 1. Objectif du modèle
+            • **Cas d’usage visé :** Prédiction du risque de départ (turnover) des employés pour aider les RH à cibler les actions de rétention.
+            • **Entrées :** Données tabulaires (âge, salaire, satisfaction, engagement, absences, département, performance, etc.).
+            • **Sorties :** Probabilité de départ (score de 0 à 1) et classification binaire (0 = Actif, 1 = Terminé).
 
-            ### Intended Use
-            - **Primary:** HR analytics tool to identify employees at risk of leaving
-            - **Users:** HR managers, people analytics teams
-            - **NOT for:** Automated decision-making about employees (advisory only)
+            ### 2. Données d’entraînement
+            • **Dataset(s) utilisés :** [Human Resources Data Set (Kaggle)](https://www.kaggle.com/datasets/rhuebner/human-resources-data-set) par Dr. Rich Huebner.
+            • **Taille / diversité :**
+              - **Nombre total d’échantillons :** ~312 employés.
+              - **Répartition des classes :** Déséquilibrée (majorité d'employés actifs, minorité de départs). Équilibrée informatiquement lors de l'entraînement.
+              - **Diversité :** Multiples départements, âges et données démographiques. Les variables sensibles (Genre, RaceDesc) ont été conservées pour vérifier l'équité du modèle.
+            • **Limites connues :** Dataset généré de manière synthétique (visée éducative). Biais géographique (grosse majorité d'employés dans le Massachusetts) et sectoriel (forte représentation du département Production). Petit volume de données empêchant la généralisation à grande échelle.
 
-            ### Performance
-            - See Frugal AI tab for detailed metrics
-            - Cross-validated on 5 folds
-            - Evaluated on accuracy, F1, precision, recall, AUC-ROC
+            ### 3. Performances
+            • **Métriques utilisées :** F1-Score (métrique principale face au déséquilibre), Accuracy, Precision, Recall, AUC-ROC.
+            • **Résultats :** Les résultats globaux démontrent que l'approche *Frugal AI* fonctionne : des modèles très simples (comme la Régression Logistique ou l'Arbre de Décision) atteignent des métriques de performance comparables aux modèles complexes lourds mis en compétition paramétrique (Random Forest / XGBoost).
 
-            ### Limitations
-            - Synthetic dataset (~312 employees) — limited size
-            - May not generalize to real organizations
-            - Sensitive attributes (gender, race) present — fairness must be monitored
-            - Historical bias in data may propagate to predictions
+            ### 4. Limites
+            • **Risques d’erreur connus :** En raison du faible jeu de données, les faux positifs (employé signalé à risque alors qu'il va rester) et faux négatifs sont possibles.
+            • **Situations non couvertes :** Le modèle prend une "photo" à l'instant T et manque d'analyse longitudinale fine (évolution dans le temps). Il ignore le contexte macroéconomique (crise, inflation, etc.).
+            • **Risques de biais :** Si le jeu de données originel favorise les promotions de certains genres ou origines, le modèle pourrait en hériter silencieusement. L'analyse de l'importance des variables (SHAP) permet de le surveiller.
 
-            ### Ethical Considerations
-            - ⚠️ **Not for automated termination/hiring decisions**
-            - ⚠️ Model should be regularly audited for bias
-            - ⚠️ Feature importance does not imply causation
-            - ✅ SHAP/LIME provide transparency into predictions
-            - ✅ GDPR compliance through data anonymization
+            ### 5. Risques & mitigation
+            • **Risques de mauvaise utilisation :** Utiliser ces prédictions pour automatiser des licenciements ou discriminer préventivement à l'embauche (système punitif au lieu d'être un système de rétention bienveillant). Penser que corrélation (montrée par SHAP) vaut causalité directe.
+            • **Contrôles mis en place :**
+              - **Explicabilité totale :** Chaque prédiction est passée dans SHAP et LIME pour justifier "pourquoi" l'alerte est levée.
+              - **Vie privée (RGPD) :** Application stricte du hachage pseudo-anonyme (SHA-256) pour les noms, et conversion des dates de naissance en âge simple.
+              - **Avertissements transverses :** Insistance sur le fait que l'IA ne fournit qu'une *aide à la décision* et ne remplace pas le jugement humain RH.
+
+            ### 6. Énergie et frugalité
+            • **Poids du modèle :** Moins de 1 Mo.
+            • **Temps d’inférence :** Immédiat (< 0.1s) sur un CPU standard.
+            • **Énergie estimée (CodeCarbon) :** L'approche privilégie un modèle classique et sélectionné pour son ratio F1/Complexité. Le suivi par `CodeCarbon` intégré indique une émission en fraction absolue de gramme de CO₂ par entraînement.
+
+            ### 7. Cyber
+            • **Sécurisation des entrées :** Pas de prompts en texte libre, minimisant les prompt injections. Les features passent par un scaler standardisé.
+            • **Secrets protégés :** Entièrement open-source, fonctionne 100% en local et "offline". La solution est dépourvue d'API keys exposées ou de base de données persistante non sécurisée.
             """)
 
         with about_tab2:
