@@ -277,6 +277,14 @@ def _select_frugal_model(results):
 
 
 if __name__ == "__main__":
-    from data_processing import run_pipeline
-    df_feat, X, y, feature_names, _ = run_pipeline()
+    from data_processing import load_raw_data, anonymize_data, engineer_features, get_model_features, run_pipeline
+    # Run full pipeline (generates all files including synthetic)
+    run_pipeline()
+    # But train models on ORIGINAL data only for best performance
+    import pandas as pd
+    from data_processing import ANONYMIZED_PATH
+    df_orig = pd.read_csv(ANONYMIZED_PATH)
+    X, y, feature_names = get_model_features(df_orig)
+    print(f"\n🎯 Training models on ORIGINAL data ({len(df_orig)} employees) for best quality...")
     train_and_evaluate(X, y, feature_names)
+

@@ -7,9 +7,9 @@
     "auc_roc": 0.8685,
     "cv_f1_mean": 0.6073,
     "cv_f1_std": 0.1099,
-    "train_time_seconds": 0.0206,
-    "carbon_emissions_kg": 0.001118,
-    "energy_kwh": 1.994e-05,
+    "train_time_seconds": 0.0076,
+    "carbon_emissions_kg": 0.001288,
+    "energy_kwh": 2.299e-05,
     "n_parameters": 19
   },
   "Decision Tree": {
@@ -20,9 +20,9 @@
     "auc_roc": 0.7647,
     "cv_f1_mean": 0.5245,
     "cv_f1_std": 0.072,
-    "train_time_seconds": 0.007,
-    "carbon_emissions_kg": 0.00115,
-    "energy_kwh": 2.052e-05,
+    "train_time_seconds": 0.0015,
+    "carbon_emissions_kg": 0.001356,
+    "energy_kwh": 2.419e-05,
     "n_parameters": 43
   },
   "Random Forest": {
@@ -33,9 +33,9 @@
     "auc_roc": 0.881,
     "cv_f1_mean": 0.5109,
     "cv_f1_std": 0.078,
-    "train_time_seconds": 0.108,
-    "carbon_emissions_kg": 0.000634,
-    "energy_kwh": 1.132e-05,
+    "train_time_seconds": 0.1057,
+    "carbon_emissions_kg": 0.001114,
+    "energy_kwh": 1.988e-05,
     "n_parameters": 6478
   },
   "XGBoost": {
@@ -46,9 +46,9 @@
     "auc_roc": 0.8866,
     "cv_f1_mean": 0.5613,
     "cv_f1_std": 0.0711,
-    "train_time_seconds": 0.2611,
-    "carbon_emissions_kg": 0.001431,
-    "energy_kwh": 2.553e-05,
+    "train_time_seconds": 0.1457,
+    "carbon_emissions_kg": 0.000646,
+    "energy_kwh": 1.152e-05,
     "n_parameters": 5000
   }
 }

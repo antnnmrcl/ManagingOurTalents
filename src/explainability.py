@@ -210,22 +210,62 @@ def explain_with_lime(model, X_train, X_instance, feature_names, class_names=Non
 
 def generate_explanation_text(shap_values, feature_names, X_instance, idx=0, top_n=5):
     """
-    Generate a human-readable explanation of why an employee
-    is predicted to leave (or stay).
+    Generate a human-readable, HR-friendly explanation of why an employee
+    is predicted to leave (or stay). Uses plain language instead of code.
     """
+    # Friendly name mapping
+    friendly = {
+        "Salary": "Salary",
+        "Age": "Age",
+        "Tenure_Years": "Time at the company",
+        "EngagementSurvey": "Engagement score",
+        "EmpSatisfaction": "Job satisfaction",
+        "SpecialProjectsCount": "Special projects involvement",
+        "DaysLateLast30": "Recent tardiness",
+        "Absences": "Number of absences",
+        "PerfScore_Numeric": "Performance rating",
+        "Sex_Binary": "Gender",
+        "MaritalStatus_Num": "Marital status",
+        "Is_Manager": "Management role",
+        "FromDiversityJobFairID": "Recruitment source",
+    }
+
     sv = shap_values[idx]
-    feature_impacts = list(zip(feature_names, sv, X_instance[idx]))
+    feature_impacts = list(zip(feature_names, sv))
 
     # Sort by absolute impact
     feature_impacts.sort(key=lambda x: abs(x[1]), reverse=True)
 
-    lines = []
-    lines.append("📋 TOP RISK FACTORS:")
-    lines.append("")
+    risk_factors = []
+    protective_factors = []
 
-    for feat_name, impact, value in feature_impacts[:top_n]:
-        direction = "↑ increases" if impact > 0 else "↓ decreases"
-        lines.append(f"  • {feat_name} = {value:.2f} → {direction} risk (impact: {impact:+.4f})")
+    for feat_name, impact in feature_impacts[:top_n]:
+        name = friendly.get(feat_name, feat_name.replace("_", " ").replace("Dept ", "Department: "))
+        if impact > 0:
+            risk_factors.append(name)
+        else:
+            protective_factors.append(name)
+
+    lines = []
+    if risk_factors:
+        lines.append("⚠️ **Factors that increase this employee's risk of leaving:**")
+        for f in risk_factors:
+            lines.append(f"  • {f}")
+        lines.append("")
+
+    if protective_factors:
+        lines.append("✅ **Factors that help retain this employee:**")
+        for f in protective_factors:
+            lines.append(f"  • {f}")
+        lines.append("")
+
+    # Add actionable summary
+    if len(risk_factors) > len(protective_factors):
+        lines.append("📌 **Bottom line:** More factors are pushing this employee toward leaving than keeping them. HR should proactively address the risk factors listed above.")
+    elif len(risk_factors) == 0:
+        lines.append("📌 **Bottom line:** No significant risk factors detected. This employee appears well-retained under current conditions.")
+    else:
+        lines.append("📌 **Bottom line:** The protective factors outweigh the risks, but it's still worth monitoring the warning signs listed above.")
 
     return "\n".join(lines)
 

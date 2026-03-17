@@ -2,16 +2,22 @@
 
 > **Hackathon: AI x RH** | Themes: **Frugal AI** + **Explainable AI**
 
+> **Scope choice (per hackathon instructions):** Our team intentionally focused on **2 themes out of 4** — **Frugal AI** and **Explainable AI**.
+
 ## 📋 Table of Contents
 - [Objective](#objective)
 - [Persona & Use Case](#persona--use-case)
 - [Dataset](#dataset)
 - [Installation](#installation)
+- [Hackathon Compliance Checklist](#hackathon-compliance-checklist)
+- [Jury Quickstart (2 minutes)](#jury-quickstart-2-minutes)
 - [Usage](#usage)
 - [Architecture](#architecture)
 - [Frugal AI Approach](#frugal-ai-approach)
 - [Explainable AI Approach](#explainable-ai-approach)
 - [NLP Analysis](#nlp-analysis)
+- [10-Minute Demo Flow](#10-minute-demo-flow)
+- [Known Limits & Responsible Use](#known-limits--responsible-use)
 - [Deliverables](#deliverables)
 - [Team](#team)
 
@@ -73,6 +79,39 @@ python -m textblob.download_corpora
 ### Requirements
 - Python 3.9+
 - No GPU required (Frugal AI!)
+
+---
+
+## ✅ Hackathon Compliance Checklist
+
+| Required item | Status | Evidence |
+|---|---|---|
+| Clear README (objectives, scope, persona, instructions) | ✅ | `README.md` |
+| Technical documentation | ✅ | `docs/` |
+| Architecture scheme | ✅ | `docs/architecture.md` |
+| Data card | ✅ | `docs/data_card.md` |
+| Model card | ✅ | `docs/model_card.md` |
+| Executive summary | ✅ | `docs/executive_summary.md` |
+| Demo (live) | ✅ | `streamlit run app.py` |
+| Slides | ⏳ | Add `slides.pptx` or `slides.pdf` before final submission |
+
+---
+
+## ⚡ Jury Quickstart (2 minutes)
+
+Run from project root:
+
+```bash
+pip install -r requirements.txt
+python -m textblob.download_corpora
+streamlit run app.py
+```
+
+Open: `http://localhost:8501`
+
+### Reproducibility note
+- For the **live demo**, the app uses files already present in `data/`, `models/`, and `results/`.
+- Full regeneration scripts (`src/data_processing.py`, `src/model_training.py`, `src/explainability.py`) expect the original Kaggle raw file path configured in `src/data_processing.py`.
 
 ---
 
@@ -180,6 +219,25 @@ Opens an interactive dashboard at `http://localhost:8501`
 - **Sentiment Analysis:** TextBlob polarity/subjectivity scoring (frugal, no GPU)
 - **Theme Extraction:** Keyword-based topic detection (8 themes: Compensation, Work-Life Balance, Career Growth, Management, Culture, Personal, Performance, Satisfaction)
 - **Key Finding:** Terminated employees show significantly lower average sentiment
+
+---
+
+## 🎤 10-Minute Demo Flow
+
+1. **Problem & scope (1 min):** turnover challenge + selected themes (**Frugal AI** and **Explainable AI**).
+2. **Dashboard overview (2 min):** KPIs, turnover by department, engagement/satisfaction trends.
+3. **Predict & explain (3 min):** one employee scenario + SHAP/LIME explanation.
+4. **Frugal AI evidence (2 min):** model comparison and why simpler models are sufficient.
+5. **NLP insights + actions (2 min):** sentiment/themes and concrete HR recommendations.
+
+---
+
+## ⚠️ Known Limits & Responsible Use
+
+- This is a **decision-support** tool, not an automated HR decision engine.
+- Predictions must not be used alone for critical actions (e.g., termination/promotion decisions).
+- Dataset is synthetic and modest in size; results should be interpreted with caution.
+- Correlation-based explanations (SHAP/LIME) do not prove direct causality.
 
 ---
 

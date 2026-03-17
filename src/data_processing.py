@@ -303,6 +303,132 @@ def generate_simulated_feedback(df):
     print(f"✅ Generated {len(feedback_df)} simulated feedback entries")
     return feedback_df
 
+def generate_synthetic_employees(df_feat, n_new=700):
+    """
+    Gen AI Data Augmentation — Synthetic Employee Generation
+    ========================================================
+    Uses SMOTE-like interpolation between same-class neighbours to
+    generate realistic synthetic employees that preserve the decision
+    boundaries of the original data. This avoids the performance
+    degradation caused by random Gaussian noise augmentation.
+    """
+    print(f"\n🤖 GEN AI AUGMENTATION: Generating {n_new} synthetic employees...")
+
+    continuous_cols = [
+        "Salary", "Age", "Tenure_Years", "EngagementSurvey",
+        "EmpSatisfaction", "SpecialProjectsCount", "DaysLateLast30", "Absences",
+        "PerfScore_Numeric", "MaritalStatus_Num"
+    ]
+    continuous_cols = [c for c in continuous_cols if c in df_feat.columns]
+
+    np.random.seed(42)
+    synthetic_rows = []
+
+    # Split by class so we interpolate within the same label
+    for termd_val in [0, 1]:
+        class_df = df_feat[df_feat["Termd"] == termd_val].reset_index(drop=True)
+        # Proportional share of new samples
+        class_share = int(n_new * len(class_df) / len(df_feat))
+
+        for _ in range(class_share):
+            # Pick two random rows from the SAME class
+            idx_a, idx_b = np.random.choice(len(class_df), size=2, replace=False)
+            row_a = class_df.iloc[idx_a].copy()
+            row_b = class_df.iloc[idx_b]
+
+            # Interpolation factor (SMOTE-style)
+            lam = np.random.uniform(0.3, 0.7)
+
+            for col in continuous_cols:
+                val_a = row_a[col]
+                val_b = row_b[col]
+                if pd.notna(val_a) and pd.notna(val_b):
+                    new_val = val_a + lam * (val_b - val_a)
+
+                    if col in ("EmpSatisfaction", "EngagementSurvey"):
+                        new_val = np.clip(round(new_val, 2), 1, 5)
+                    elif col in ("Age", "SpecialProjectsCount", "DaysLateLast30", "Absences"):
+                        new_val = max(0, int(round(new_val)))
+                    elif col == "Tenure_Years":
+                        new_val = max(0.0, round(new_val, 2))
+                    elif col == "Salary":
+                        new_val = max(30000, int(round(new_val)))
+                    elif col in ("PerfScore_Numeric", "MaritalStatus_Num"):
+                        new_val = int(round(new_val))
+
+                    row_a[col] = new_val
+
+            # Generate a unique synthetic Employee ID
+            random_hash = hashlib.sha256(str(np.random.rand()).encode()).hexdigest()[:8].upper()
+            row_a["EmployeeID_Anon"] = f"GEN_{random_hash}"
+
+            synthetic_rows.append(row_a)
+
+    df_synthetic = pd.DataFrame(synthetic_rows)
+
+    print(f"   ✅ Original: {len(df_feat)} employees")
+    print(f"   ✅ Synthetic: {len(df_synthetic)} employees")
+
+    return df_synthetic
+
+
+def generate_synthetic_feedback(df_synthetic):
+    """
+    Generate simulated feedback for synthetic employees.
+    """
+    feedback_templates_active = [
+        "I enjoy working here. The team is great and I feel valued.",
+        "The company has been supportive of my growth. I appreciate the opportunities.",
+        "I'm satisfied with my role and compensation. Management is fair.",
+        "Good work-life balance and collaborative environment keep me here.",
+        "I feel my contributions are recognized and I see a clear career path.",
+        "The benefits and culture are excellent. I'm happy with my decision to stay.",
+        "My manager is supportive and the projects are interesting and challenging.",
+        "I've grown a lot professionally here and continue to learn new things.",
+    ]
+    feedback_templates_terminated = [
+        "I felt undervalued in my role. The work environment was not supportive.",
+        "I received a much better offer elsewhere. My salary here was below market rate.",
+        "I found an opportunity that better aligned with my career goals.",
+        "Work-life balance was terrible. I was constantly stressed and burned out.",
+        "Management didn't listen to our concerns. Nothing changed despite feedback.",
+        "Despite good performance reviews, my compensation didn't reflect my contributions.",
+        "I decided to pursue a different career path that I'm more passionate about.",
+        "The long hours were taking a toll on my health and family life.",
+    ]
+
+    np.random.seed(123)
+    feedbacks = []
+
+    for _, row in df_synthetic.iterrows():
+        termd = int(row.get("Termd", 0))
+        templates = feedback_templates_terminated if termd == 1 else feedback_templates_active
+        feedback = np.random.choice(templates)
+
+        satisfaction = row.get("EmpSatisfaction", 3)
+        engagement = row.get("EngagementSurvey", 3.0)
+
+        if satisfaction <= 2:
+            feedback += " Overall, my satisfaction with the job was quite low."
+        elif satisfaction >= 5:
+            feedback += " Despite this, I had many positive experiences here."
+        if engagement < 3.0:
+            feedback += " I felt disconnected from the company's mission."
+        elif engagement > 4.5:
+            feedback += " I always felt engaged with the work itself."
+
+        feedbacks.append({
+            "EmployeeID_Anon": row.get("EmployeeID_Anon", "UNKNOWN"),
+            "Termd": termd,
+            "TermReason": "N/A-StillEmployed" if termd == 0 else "unhappy",
+            "Department": str(row.get("Department", "Unknown")).strip(),
+            "Feedback": feedback,
+            "Satisfaction": satisfaction,
+            "Engagement": engagement,
+        })
+
+    return pd.DataFrame(feedbacks)
+
 
 def run_pipeline():
     """Run the full data processing pipeline."""
@@ -322,23 +448,43 @@ def run_pipeline():
     # Step 3: Feature Engineering
     df_feat = engineer_features(df_anon)
 
-    # Step 4: Save anonymized dataset
+    # Step 4: Save ORIGINAL anonymized dataset (untouched)
     df_feat.to_csv(ANONYMIZED_PATH, index=False)
-    print(f"✅ Saved anonymized dataset to: {ANONYMIZED_PATH}")
+    print(f"✅ Saved original dataset to: {ANONYMIZED_PATH} ({len(df_feat)} rows)")
 
-    # Step 5: Generate simulated feedback
+    # Step 5: Generate simulated feedback for original employees
     feedback_df = generate_simulated_feedback(df)
     feedback_df.to_csv(FEEDBACK_PATH, index=False)
-    print(f"✅ Saved feedback data to: {FEEDBACK_PATH}")
+    print(f"✅ Saved original feedback to: {FEEDBACK_PATH}")
 
-    # Step 6: Get model features
-    X, y, feature_names = get_model_features(df_feat)
+    # Step 6: Gen AI Data Augmentation (synthetic employees)
+    df_synthetic = generate_synthetic_employees(df_feat, n_new=700)
+    synthetic_path = os.path.join(PROCESSED_DATA_DIR, "hr_synthetic.csv")
+    df_synthetic.to_csv(synthetic_path, index=False)
+    print(f"✅ Saved synthetic dataset to: {synthetic_path} ({len(df_synthetic)} rows)")
+
+    # Step 7: Gen AI Feedback Augmentation (synthetic feedback)
+    synthetic_feedback = generate_synthetic_feedback(df_synthetic)
+    synthetic_feedback_path = os.path.join(PROCESSED_DATA_DIR, "employee_feedback_synthetic.csv")
+    synthetic_feedback.to_csv(synthetic_feedback_path, index=False)
+    print(f"✅ Saved synthetic feedback to: {synthetic_feedback_path} ({len(synthetic_feedback)} rows)")
+
+    # Step 8: Combine original + synthetic for model training
+    df_combined = pd.concat([df_feat, df_synthetic], ignore_index=True)
+    feedback_combined = pd.concat([feedback_df, synthetic_feedback], ignore_index=True)
+
+    print(f"\n📊 Combined dataset: {len(df_combined)} employees")
+    print(f"📊 Combined feedback: {len(feedback_combined)} entries")
+
+    # Step 9: Get model features from the combined dataset
+    X, y, feature_names = get_model_features(df_combined)
     print(f"\n✅ Pipeline complete!")
     print(f"   Dataset shape: {X.shape}")
     print(f"   Target distribution: {dict(y.value_counts())}")
 
-    return df_feat, X, y, feature_names, feedback_df
+    return df_combined, X, y, feature_names, feedback_combined
 
 
 if __name__ == "__main__":
     run_pipeline()
+

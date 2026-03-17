@@ -1,5 +1,13 @@
 # Executive Summary — HR Turnover Prediction (Trusted AI)
 
+## Hackathon Scope Alignment
+
+This project intentionally addresses **2 required AI themes** from the brief:
+- **Frugal AI**
+- **Explainable AI**
+
+The other themes (Cybersecurity and Ethics/Fairness) are acknowledged as future extensions, but were not selected as primary themes for this submission.
+
 ## The Problem
 
 Employee turnover is a critical challenge for organizations. Replacing an employee costs **50–200% of their annual salary** (SHRM). Our client faces a **high resignation rate** and needs to understand why employees leave and how to retain them.

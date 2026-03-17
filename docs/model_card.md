@@ -1,5 +1,8 @@
 # MODEL CARD : HR Turnover Prediction
 
+## Scope Note (Hackathon)
+This model card is aligned with the team's selected themes: **Frugal AI** and **Explainable AI** (2 themes required by the challenge).
+
 ## 1. Model Objective
 • **Target Use Case:** Predicting employee turnover risk to help HR target retention actions.
 • **Inputs:** Tabular data (age, salary, satisfaction, engagement, absences, department, performance, etc.).
