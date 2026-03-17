@@ -792,31 +792,31 @@ def main():
 
             ```
             ┌──────────────────────────────────────────────────────────┐
-            │                    DATA LAYER                             │
+            │                    DATA LAYER                            │
             │  HR Dataset (CSV) → Anonymization → Feature Engineering  │
             │  Employee Feedback (Generated) → NLP Processing          │
             └──────────────┬───────────────────┬───────────────────────┘
                            │                   │
             ┌──────────────▼───────┐ ┌────────▼──────────────────────┐
-            │   MODEL LAYER        │ │   NLP LAYER                    │
+            │   MODEL LAYER        │ │   NLP LAYER                   │
             │  • Log. Regression   │ │  • Sentiment (TextBlob)       │
             │  • Decision Tree     │ │  • Theme Extraction           │
             │  • Random Forest     │ │  • Keyword Analysis           │
-            │  • XGBoost           │ │                                │
+            │  • XGBoost           │ │                               │
             │  + CodeCarbon Track  │ │  Frugal: No GPU needed!       │
             └──────────────┬───────┘ └────────┬──────────────────────┘
                            │                   │
             ┌──────────────▼───────────────────▼──────────────────────┐
-            │                 EXPLAINABILITY LAYER                     │
+            │                 EXPLAINABILITY LAYER                    │
             │  • SHAP (Global + Local)  • LIME (Local)                │
-            │  • Human-readable text    • Feature importance           │
+            │  • Human-readable text    • Feature importance          │
             └──────────────┬──────────────────────────────────────────┘
                            │
             ┌──────────────▼──────────────────────────────────────────┐
-            │              PRESENTATION LAYER (Streamlit)              │
-            │  • Overview Dashboard    • Individual Prediction         │
-            │  • Frugal AI Comparison  • NLP Insights                  │
-            │  • Model Card / Data Card                                │
+            │              PRESENTATION LAYER (Streamlit)             │
+            │  • Overview Dashboard    • Individual Prediction        │
+            │  • Frugal AI Comparison  • NLP Insights                 │
+            │  • Model Card / Data Card                               │
             └─────────────────────────────────────────────────────────┘
             ```
 

@@ -159,25 +159,25 @@ Opens an interactive dashboard at `http://localhost:8501`
 └──────────────┬────────────────────┬────────────────────────┘
                │                    │
 ┌──────────────▼────────┐ ┌────────▼───────────────────────┐
-│    MODEL LAYER        │ │    NLP LAYER                    │
+│    MODEL LAYER        │ │    NLP LAYER                   │
 │  • Logistic Regr.     │ │  • Sentiment (TextBlob)        │
 │  • Decision Tree      │ │  • Theme Extraction            │
 │  • Random Forest      │ │  • Keyword Analysis            │
-│  • XGBoost            │ │                                 │
+│  • XGBoost            │ │                                │
 │  + CodeCarbon Tracker │ │  Frugal: No GPU needed!        │
 └──────────────┬────────┘ └────────┬───────────────────────┘
                │                    │
 ┌──────────────▼────────────────────▼────────────────────────┐
-│               EXPLAINABILITY LAYER                          │
+│               EXPLAINABILITY LAYER                         │
 │  • SHAP (Global + Local)    • LIME (Local)                 │
 │  • Human-readable text      • Feature importance plots     │
 └──────────────┬─────────────────────────────────────────────┘
                │
 ┌──────────────▼─────────────────────────────────────────────┐
-│            PRESENTATION LAYER (Streamlit)                    │
-│  • Overview Dashboard      • Individual Prediction          │
-│  • Frugal AI Comparison    • NLP Insights                   │
-│  • Model Card / Data Card                                   │
+│            PRESENTATION LAYER (Streamlit)                  │
+│  • Overview Dashboard      • Individual Prediction         │
+│  • Frugal AI Comparison    • NLP Insights                  │
+│  • Model Card / Data Card                                  │
 └────────────────────────────────────────────────────────────┘
 ```
 
