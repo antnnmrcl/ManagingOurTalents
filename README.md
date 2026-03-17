@@ -1,10 +1,10 @@
-# 🎯 HR Turnover Prediction — Trusted AI Solution
+#  HR Turnover Prediction — Trusted AI Solution
 
 > **Hackathon: AI x RH** | Themes: **Frugal AI** + **Explainable AI**
 
 > **Scope choice (per hackathon instructions):** Our team intentionally focused on **2 themes out of 4** — **Frugal AI** and **Explainable AI**.
 
-## 📋 Table of Contents
+##  Table of Contents
 - [Objective](#objective)
 - [Persona & Use Case](#persona--use-case)
 - [Dataset](#dataset)
