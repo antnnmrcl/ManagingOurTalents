@@ -23,7 +23,7 @@
 
 ---
 
-## 🎯 Objective
+##  Objective
 
 An imaginary company faces a **high resignation rate** and wants to use AI to:
 1. **Predict** which employees are at risk of leaving
@@ -33,7 +33,7 @@ An imaginary company faces a **high resignation rate** and wants to use AI to:
 
 ---
 
-## 👤 Persona & Use Case
+##  Persona & Use Case
 
 **Use Case:** Employee Resignation Analysis
 
@@ -45,7 +45,7 @@ An imaginary company faces a **high resignation rate** and wants to use AI to:
 
 ---
 
-## 📊 Dataset
+##  Dataset
 
 - **Source:** [Kaggle HR Dataset](https://www.kaggle.com/datasets/rhuebner/human-resources-data-set) by Dr. Rich Huebner
 - **Size:** ~312 employees, 36 features
@@ -62,7 +62,7 @@ All personal data has been **anonymized**:
 
 ---
 
-## 🚀 Installation
+##  Installation
 
 ```bash
 # Clone the repository
@@ -82,22 +82,22 @@ python -m textblob.download_corpora
 
 ---
 
-## ✅ Hackathon Compliance Checklist
+##  Hackathon Compliance Checklist
 
 | Required item | Status | Evidence |
 |---|---|---|
-| Clear README (objectives, scope, persona, instructions) | ✅ | `README.md` |
-| Technical documentation | ✅ | `docs/` |
-| Architecture scheme | ✅ | `docs/architecture.md` |
-| Data card | ✅ | `docs/data_card.md` |
-| Model card | ✅ | `docs/model_card.md` |
-| Executive summary | ✅ | `docs/executive_summary.md` |
-| Demo (live) | ✅ | `streamlit run app.py` |
-| Slides | ⏳ | Add `slides.pptx` or `slides.pdf` before final submission |
+| Clear README (objectives, scope, persona, instructions) |  | `README.md` |
+| Technical documentation |  | `docs/` |
+| Architecture scheme |  | `docs/architecture.md` |
+| Data card |  | `docs/data_card.md` |
+| Model card |  | `docs/model_card.md` |
+| Executive summary |  | `docs/executive_summary.md` |
+| Demo (live) |  | `streamlit run app.py` |
+| Slides |  | Add `slides.pptx` or `slides.pdf` before final submission |
 
 ---
 
-## ⚡ Jury Quickstart (2 minutes)
+##  Jury Quickstart (2 minutes)
 
 Run from project root:
 
@@ -115,7 +115,7 @@ Open: `http://localhost:8501`
 
 ---
 
-## ▶️ Usage
+##  Usage
 
 ### 1. Run the Data Pipeline
 ```bash
@@ -149,7 +149,7 @@ Opens an interactive dashboard at `http://localhost:8501`
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
 ┌────────────────────────────────────────────────────────────┐
@@ -183,7 +183,7 @@ Opens an interactive dashboard at `http://localhost:8501`
 
 ---
 
-## 🌱 Frugal AI Approach
+##  Frugal AI Approach
 
 | Aspect | Our Approach |
 |--------|-------------|
@@ -196,7 +196,7 @@ Opens an interactive dashboard at `http://localhost:8501`
 
 ---
 
-## 🔍 Explainable AI Approach
+##  Explainable AI Approach
 
 | Tool | Type | Purpose |
 |------|------|---------|
@@ -213,7 +213,7 @@ Opens an interactive dashboard at `http://localhost:8501`
 
 ---
 
-## 💬 NLP Analysis
+##  NLP Analysis
 
 - **Simulated Data:** Exit interview feedback generated based on real TermReason patterns
 - **Sentiment Analysis:** TextBlob polarity/subjectivity scoring (frugal, no GPU)
@@ -222,7 +222,7 @@ Opens an interactive dashboard at `http://localhost:8501`
 
 ---
 
-## 🎤 10-Minute Demo Flow
+##  10-Minute Demo Flow
 
 1. **Problem & scope (1 min):** turnover challenge + selected themes (**Frugal AI** and **Explainable AI**).
 2. **Dashboard overview (2 min):** KPIs, turnover by department, engagement/satisfaction trends.
@@ -232,7 +232,7 @@ Opens an interactive dashboard at `http://localhost:8501`
 
 ---
 
-## ⚠️ Known Limits & Responsible Use
+##  Known Limits & Responsible Use
 
 - This is a **decision-support** tool, not an automated HR decision engine.
 - Predictions must not be used alone for critical actions (e.g., termination/promotion decisions).
@@ -241,7 +241,7 @@ Opens an interactive dashboard at `http://localhost:8501`
 
 ---
 
-## 📦 Deliverables
+##  Deliverables
 
 | # | Deliverable | Location |
 |---|------------|----------|
@@ -255,7 +255,7 @@ Opens an interactive dashboard at `http://localhost:8501`
 
 ---
 
-## 🏫 Team
+##  Team
 
 - Hackathon: Trusted AI x HR
 - Course: Explainability AI
@@ -263,4 +263,4 @@ Opens an interactive dashboard at `http://localhost:8501`
 
 ---
 
-*Built with ❤️ and 🌱 minimal carbon footprint*
+*Built with minimal carbon footprint*
