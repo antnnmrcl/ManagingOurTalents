@@ -10,25 +10,25 @@ The system follows a **modular, layered architecture** designed for maximum tran
                         │   via Browser   │
                         └────────┬────────┘
                                  │
-                        ┌────────▼────────┐
-                        │   Streamlit     │
+                        ┌────────▼───────┐
+                        │   Streamlit    │
                         │   Dashboard    │
                         │   (app.py)     │
                         └────┬───┬───┬───┘
                              │   │   │
               ┌──────────────┘   │   └──────────────┐
-              │                  │                   │
+              │                  │                  │
      ┌────────▼──────┐  ┌──────▼───────┐  ┌────────▼───────┐
-     │ Explainability │  │ Model Layer  │  │  NLP Layer     │
+     │ Explainability│  │ Model Layer  │  │  NLP Layer     │
      │ (SHAP/LIME)   │  │ (ML Models)  │  │  (TextBlob)    │
      └────────┬──────┘  └──────┬───────┘  └────────┬───────┘
-              │                │                    │
-              └────────┬───────┘                    │
-                       │                            │
-              ┌────────▼────────────────────────────▼──┐
-              │         Data Processing Layer           │
-              │  (Anonymization + Feature Engineering)  │
-              └────────────────┬────────────────────────┘
+              │                │                   │
+              └────────┬───────┘                   │
+                       │                           │
+              ┌────────▼───────────────────────────▼──┐
+              │         Data Processing Layer         │
+              │  (Anonymization + Feature Engineering)│
+              └────────────────┬──────────────────────┘
                                │
                       ┌────────▼────────┐
                       │   Raw CSV Data  │
